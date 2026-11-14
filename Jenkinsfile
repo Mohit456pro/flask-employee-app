@@ -7,21 +7,21 @@ pipeline {
 
 
         stage('Install Dependencies') {
-            steps {
-                sh '''
-                    python3 -m pip install -r requirements.txt
-                '''
-            }
-        }
-
-
-        stage('Run Flask Application') {
-            steps {
-                sh '''
-                    nohup python3 app.py > flask.log 2>&1 &
-                '''
-            }
-        }
+    steps {
+        sh '''
+            python3 -m venv .venv
+            .venv/bin/pip install --upgrade pip
+            .venv/bin/pip install -r requirements.txt
+        '''
+    }
+}
+stage('Run Flask Application') {
+    steps {
+        sh '''
+            .venv/bin/python app.py
+        '''
+    }
+}
     }
 
 
