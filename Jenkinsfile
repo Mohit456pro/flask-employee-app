@@ -15,10 +15,18 @@ pipeline {
         '''
     }
 }
-stage('Run Flask Application') {
+stage('Test Flask Application') {
     steps {
         sh '''
-            .venv/bin/python app.py
+            # 1. Start Flask in the background
+            .venv/bin/python app.py &
+            FLASK_PID=$!
+            # 2. Give it a moment to boot up
+            sleep 3
+            # 3. Test that it responds
+            curl -I http://127.0.0.1:5000
+            # 4. Gracefully terminate Flask so Jenkins can proceed
+            kill $FLASK_PID
         '''
     }
 }
