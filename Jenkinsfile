@@ -2,25 +2,6 @@ pipeline {
 
 
     agent any
-stage('Setup Python') {
-
-            steps {
-
-                sh '''
-
-                    apt-get update
-
-                    apt-get install -y python3 python3-pip
-
-                    python3 --version
-
-                    pip3 --version
-
-                '''
-
-            }
-
-        }
 
     stages {
 
