@@ -1,41 +1,38 @@
 pipeline {
-
-
     agent any
 
-
     stages {
-
-
-        stage('Install Dependencies') {
+        stage('Checkout') {
             steps {
-                sh '''
-                    python3 -m pip install -r requirements.txt
-                '''
+                checkout scm
             }
         }
 
-
-        stage('Run Flask Application') {
+        stage('Python Build & Test') {
             steps {
                 sh '''
-                    nohup python3 app.py > flask.log 2>&1 &
+                    # 1. Create a virtual environment
+                    python3 -m venv venv
+
+                    # 2. Activate virtual environment
+                    . venv/bin/activate
+
+                    # 3. Upgrade pip & install dependencies
+                    pip install --upgrade pip
+                    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+                    # 4. Run tests or Python script
+                    pytest
+                    # or: python3 main.py
                 '''
             }
         }
     }
 
-
     post {
-        success {
-            echo 'Flask application started successfully!'
-        }
-
-
-        failure {
-            echo 'Pipeline execution failed!'
+        always {
+            // Clean up virtual environment after build
+            sh 'rm -rf venv'
         }
     }
 }
-
-
